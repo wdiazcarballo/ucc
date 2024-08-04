@@ -8,13 +8,23 @@
 #define ALLREDUCE_H_
 #include "tl_ucp_coll.h"
 
-enum {
+/* enum {
     UCC_TL_UCP_ALLREDUCE_ALG_KNOMIAL,
     UCC_TL_UCP_ALLREDUCE_ALG_SRA_KNOMIAL,
     UCC_TL_UCP_ALLREDUCE_ALG_SLIDING_WINDOW,
     UCC_TL_UCP_ALLREDUCE_ALG_DBT,
     UCC_TL_UCP_ALLREDUCE_ALG_LAST
 };
+ */
+enum {
+    UCC_TL_UCP_ALLREDUCE_ALG_KNOMIAL,
+    UCC_TL_UCP_ALLREDUCE_ALG_SRA_KNOMIAL,
+    UCC_TL_UCP_ALLREDUCE_ALG_SLIDING_WINDOW,
+    UCC_TL_UCP_ALLREDUCE_ALG_DBT,
+    UCC_TL_UCP_ALLREDUCE_ALG_SHARP_SRA_KNOMIAL,  // New algorithm
+    UCC_TL_UCP_ALLREDUCE_ALG_LAST
+};
+
 
 extern ucc_base_coll_alg_info_t
              ucc_tl_ucp_allreduce_algs[UCC_TL_UCP_ALLREDUCE_ALG_LAST + 1];
@@ -77,8 +87,17 @@ ucc_status_t ucc_tl_ucp_allreduce_dbt_start(ucc_coll_task_t *task);
 
 ucc_status_t ucc_tl_ucp_allreduce_dbt_progress(ucc_coll_task_t *task);
 
-static inline int ucc_tl_ucp_allreduce_alg_from_str(const char *str)
-{
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_init(ucc_base_coll_args_t *coll_args,
+                                                         ucc_base_team_t *team,
+                                                         ucc_coll_task_t **task_h);
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_start(ucc_coll_task_t *task);
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_progress(ucc_coll_task_t *task);
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_finalize(ucc_coll_task_t *task);
+
+static inline int ucc_tl_ucp_allreduce_alg_from_str(const char *str) {
     int i;
     for (i = 0; i < UCC_TL_UCP_ALLREDUCE_ALG_LAST; i++) {
         if (0 == strcasecmp(str, ucc_tl_ucp_allreduce_algs[i].name)) {
@@ -87,4 +106,5 @@ static inline int ucc_tl_ucp_allreduce_alg_from_str(const char *str)
     }
     return i;
 }
+
 #endif

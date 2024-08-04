@@ -29,6 +29,10 @@ ucc_base_coll_alg_info_t
             {.id   = UCC_TL_UCP_ALLREDUCE_ALG_SLIDING_WINDOW,
              .name = "sliding_window",
              .desc = "sliding window allreduce (optimized for running on DPU)"},
+        [UCC_TL_UCP_ALLREDUCE_ALG_SHARP_SRA_KNOMIAL] =
+            {.id   = UCC_TL_UCP_ALLREDUCE_ALG_SHARP_SRA_KNOMIAL,
+             .name = "sharp_sra_knomial",
+             .desc = "scatter-reduce-allgather knomial using SHARP (optimized for bandwidth)"},
         [UCC_TL_UCP_ALLREDUCE_ALG_LAST] = {
             .id = 0, .name = NULL, .desc = NULL}};
 
@@ -42,8 +46,8 @@ out:
 }
 
 ucc_status_t ucc_tl_ucp_allreduce_knomial_init(ucc_base_coll_args_t *coll_args,
-                                               ucc_base_team_t *     team,
-                                               ucc_coll_task_t **    task_h)
+                                               ucc_base_team_t *team,
+                                               ucc_coll_task_t **task_h)
 {
     ucc_tl_ucp_team_t *tl_team = ucc_derived_of(team, ucc_tl_ucp_team_t);
     ucc_tl_ucp_task_t *task;
@@ -54,4 +58,22 @@ ucc_status_t ucc_tl_ucp_allreduce_knomial_init(ucc_base_coll_args_t *coll_args,
     status = ucc_tl_ucp_allreduce_knomial_init_common(task);
 out:
     return status;
+}
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_init(ucc_base_coll_args_t *coll_args,
+                                                         ucc_base_team_t *team,
+                                                         ucc_coll_task_t **task_h) {
+    return ucc_tl_sharp_allreduce_sra_knomial_init(coll_args, team, task_h);
+}
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_start(ucc_coll_task_t *task) {
+    return ucc_tl_sharp_allreduce_sra_knomial_start(task);
+}
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_progress(ucc_coll_task_t *task) {
+    return ucc_tl_sharp_allreduce_sra_knomial_progress(task);
+}
+
+ucc_status_t ucc_tl_ucp_allreduce_sharp_sra_knomial_finalize(ucc_coll_task_t *task) {
+    return ucc_tl_sharp_allreduce_sra_knomial_finalize(task);
 }
